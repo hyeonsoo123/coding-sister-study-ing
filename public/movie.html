@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 영화 탐색 · Coding Sister</title>
+    <meta name="description" content="TMDB API로 인기·최신 영화를 둘러보고, 상세 정보와 예고편을 확인하고, 찜해두는 OTT 스타일 영화 탐색 사이트.">
+
+    <!-- Open Graph (카카오톡·슬랙 등 링크 미리보기) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="🎬 영화 탐색 · Coding Sister">
+    <meta property="og:description" content="TMDB API 연동 OTT 스타일 영화 탐색 사이트 — 인기·최신·장르별 둘러보기, 예고편·출연진, 찜하기.">
+    <meta property="og:locale" content="ko_KR">
+
+    <!-- 파비콘 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/movie.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- 헤더 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 relative">
+            <div class="flex justify-between items-center gap-3">
+                <a href="movie.html" class="text-xl sm:text-2xl font-bold text-indigo-600 shrink-0">🎬<span class="hidden sm:inline"> Coding Sister 영화</span></a>
+
+                <!-- 모바일: 햄버거 / 데스크톱: 인라인 -->
+                <button id="menuBtn" type="button" aria-label="menu" class="sm:hidden px-3 py-2 bg-indigo-100 text-indigo-600 rounded-lg min-h-[44px] text-xl leading-none">☰</button>
+
+                <div id="menuPanel" class="hidden sm:flex flex-col sm:flex-row items-stretch sm:items-center gap-2 absolute sm:static top-full right-4 sm:right-auto mt-2 sm:mt-0 p-3 sm:p-0 rounded-xl sm:rounded-none bg-[#16171d] sm:bg-transparent border border-white/10 sm:border-0 shadow-xl sm:shadow-none z-50">
+                    <select id="langSelect" aria-label="Language" class="px-2 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-semibold min-h-[44px] outline-none cursor-pointer border border-indigo-100"></select>
+                    <a href="about.html" class="px-3 py-2 bg-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-200 transition font-semibold text-sm min-h-[44px] flex items-center">👤 <span class="ml-1" data-i18n="header_about">내 정보</span></a>
+                    <a href="index.html" class="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold text-sm min-h-[44px] flex items-center">📅 <span class="ml-1">TODO</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 히어로 빌보드 (와이드 백드롭 + 검색) -->
+    <section id="hero" class="relative w-full overflow-hidden bg-gray-900">
+        <div id="heroSlide" class="absolute inset-0">
+            <img id="heroImg" src="" alt="" class="w-full h-full object-cover object-top opacity-0 transition-opacity duration-500">
+        </div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent"></div>
+
+        <div class="relative max-w-7xl mx-auto min-h-[360px] sm:min-h-[460px] px-4 sm:px-6 lg:px-8 flex flex-col justify-between gap-6 py-6 sm:py-7">
+            <!-- 검색 (히어로 상단, 가운데) -->
+            <form id="searchForm" class="w-full sm:max-w-2xl mx-auto">
+                <div class="relative">
+                    <input id="searchInput" type="search" placeholder="영화·시리즈 검색…" data-i18n-ph="search_ph"
+                           class="w-full pl-5 pr-14 py-3 rounded-full bg-white/95 shadow-lg focus:ring-2 focus:ring-indigo-300 outline-none min-h-[48px]">
+                    <button type="submit" aria-label="search"
+                            class="absolute right-1.5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center hover:bg-indigo-700 transition">🔍</button>
+                </div>
+            </form>
+
+            <!-- 피처드 정보 (히어로 하단) -->
+            <div id="heroInfo" class="max-w-2xl text-white">
+                <a id="heroTitleLink" href="#" class="inline-block">
+                    <h2 id="heroTitle" class="text-2xl sm:text-5xl font-extrabold drop-shadow-lg leading-tight transition-opacity hover:opacity-80"></h2>
+                </a>
+                <div id="heroMeta" class="flex flex-wrap items-center gap-2 mt-2 text-sm"></div>
+                <p id="heroOverview" class="mt-2 text-sm sm:text-base text-gray-200 drop-shadow max-w-xl"
+                   style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"></p>
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <button id="heroTrailer" type="button" class="px-5 py-2.5 bg-indigo-500 text-white rounded-lg font-bold hover:bg-indigo-400 transition min-h-[44px] inline-flex items-center gap-1">▶ <span data-i18n="sec_trailer">예고편</span></button>
+                    <a id="heroDetail" href="#" class="px-5 py-2.5 bg-white/25 text-white rounded-lg font-bold backdrop-blur hover:bg-white/35 transition min-h-[44px] inline-flex items-center gap-1">ℹ <span data-i18n="hero_detail">상세 보기</span></a>
+                    <button id="heroFav" type="button" aria-label="favorite" class="px-4 py-2.5 bg-white/25 text-white rounded-lg font-bold backdrop-blur hover:bg-white/35 transition min-h-[44px]">🤍</button>
+                </div>
+            </div>
+
+            <!-- 좌우 이동 + 점 -->
+            <button id="heroPrev" type="button" aria-label="prev" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white text-2xl hidden sm:flex items-center justify-center">‹</button>
+            <button id="heroNext" type="button" aria-label="next" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/60 text-white text-2xl hidden sm:flex items-center justify-center">›</button>
+            <div id="heroDots" class="absolute bottom-3 right-4 flex gap-1.5"></div>
+        </div>
+    </section>
+
+    <!-- 서브 내비 (탭) -->
+    <div class="bg-white/80 backdrop-blur sticky top-[76px] z-40 border-b border-indigo-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <nav class="flex gap-2 flex-wrap">
+                <button data-view="home" class="nav-tab px-4 py-2 rounded-lg font-semibold text-sm min-h-[44px] transition bg-indigo-100 text-indigo-600">🏠 <span data-i18n="nav_home">홈</span></button>
+                <button data-view="tv" class="nav-tab px-4 py-2 rounded-lg font-semibold text-sm min-h-[44px] transition bg-indigo-100 text-indigo-600">📺 <span data-i18n="nav_series">시리즈</span></button>
+                <button data-view="browse" class="nav-tab px-4 py-2 rounded-lg font-semibold text-sm min-h-[44px] transition bg-indigo-100 text-indigo-600">🎛 <span data-i18n="nav_browse">탐색</span></button>
+                <button data-view="fav" class="nav-tab px-4 py-2 rounded-lg font-semibold text-sm min-h-[44px] transition bg-indigo-100 text-indigo-600 relative">
+                    ❤️ <span data-i18n="nav_fav">내 찜</span>
+                    <span id="favCount" class="hidden absolute -top-1 -right-1 min-w-[20px] h-5 px-1 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">0</span>
+                </button>
+            </nav>
+        </div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- 홈 -->
+        <div id="homeView">
+            <div id="rows"></div>
+        </div>
+
+        <!-- TV / 시리즈 -->
+        <div id="tvView" class="hidden">
+            <div id="tvRows"></div>
+        </div>
+
+        <!-- 검색 결과 -->
+        <div id="searchView" class="hidden">
+            <h2 id="searchHeading" class="text-xl sm:text-2xl font-bold text-gray-800 mb-4"></h2>
+            <div id="searchResults" class="movie-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+            <div class="text-center mt-6">
+                <button id="searchMore" data-i18n="more" class="hidden px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold min-h-[44px]">더 보기</button>
+            </div>
+        </div>
+
+        <!-- 탐색 (전체 장르 + 필터) -->
+        <div id="browseView" class="hidden">
+            <div class="bg-white rounded-xl shadow p-4 sm:p-5 mb-6">
+                <p class="text-sm font-semibold text-gray-700 mb-2" data-i18n="f_genre">장르</p>
+                <div id="genreChips" class="flex flex-wrap gap-2 mb-4">
+                    <span class="text-gray-400 text-sm" data-i18n="genre_loading">장르 불러오는 중…</span>
+                </div>
+                <div class="flex flex-wrap gap-3 items-end">
+                    <label class="text-sm">
+                        <span class="block text-gray-500 mb-1" data-i18n="f_sort">정렬</span>
+                        <select id="sortBy" class="px-3 py-2 rounded-lg border border-gray-300 min-h-[44px]">
+                            <option value="popularity.desc" data-i18n="sort_pop">인기순</option>
+                            <option value="vote_average.desc" data-i18n="sort_rating">평점순</option>
+                            <option value="primary_release_date.desc" data-i18n="sort_new">최신순</option>
+                            <option value="revenue.desc" data-i18n="sort_revenue">흥행순</option>
+                        </select>
+                    </label>
+                    <label class="text-sm">
+                        <span class="block text-gray-500 mb-1" data-i18n="f_rating">최소 평점</span>
+                        <select id="minRating" class="px-3 py-2 rounded-lg border border-gray-300 min-h-[44px]">
+                            <option value="" data-i18n="rating_all">전체</option>
+                            <option value="5">5+</option>
+                            <option value="6">6+</option>
+                            <option value="7">7+</option>
+                            <option value="8">8+</option>
+                        </select>
+                    </label>
+                    <label class="text-sm">
+                        <span class="block text-gray-500 mb-1" data-i18n="f_year">연도</span>
+                        <input id="yearFilter" type="number" inputmode="numeric" placeholder="예: 2024" data-i18n-ph="year_ph" min="1900" max="2100"
+                               class="w-28 px-3 py-2 rounded-lg border border-gray-300 min-h-[44px]">
+                    </label>
+                    <button id="applyFilter" data-i18n="f_apply" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold min-h-[44px]">적용</button>
+                    <button id="resetFilter" data-i18n="f_reset" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition font-semibold min-h-[44px]">초기화</button>
+                </div>
+            </div>
+            <div id="browseResults" class="movie-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+            <div class="text-center mt-6">
+                <button id="browseMore" data-i18n="more" class="hidden px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold min-h-[44px]">더 보기</button>
+            </div>
+        </div>
+
+        <!-- 내 찜 -->
+        <div id="favView" class="hidden">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-4">❤️ <span data-i18n="fav_heading">내가 찜한 영화</span></h2>
+            <div id="favGrid" class="movie-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+        </div>
+    </main>
+
+    <footer class="text-center text-gray-400 text-sm py-8">
+        <span data-i18n="footer_data">데이터 제공:</span> <a href="https://www.themoviedb.org/" target="_blank" class="underline hover:text-indigo-500">TMDB</a>
+    </footer>
+
+    <!-- 스크립트 (순서 중요: i18n → config → api/favorites → ui → home) -->
+    <script src="js/movie/i18n.js"></script>
+    <script src="js/movie/config.js"></script>
+    <script src="js/movie/api.js"></script>
+    <script src="js/movie/favorites.js"></script>
+    <script src="js/movie/recent.js"></script>
+    <script src="js/movie/ui.js"></script>
+    <script src="js/movie/home.js"></script>
+</body>
+</html>

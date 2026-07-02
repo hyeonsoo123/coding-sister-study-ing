@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영화 상세 · Coding Sister</title>
+    <meta name="description" content="영화 상세 정보 · 예고편 · 출연진 · 평점 · 비슷한 영화">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/movie.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+    <!-- 헤더 -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center gap-3">
+                <a href="movie.html" data-i18n="movie_home" class="px-3 py-2 bg-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-200 transition font-semibold text-sm min-h-[44px] flex items-center">← 영화 홈</a>
+                <div class="flex items-center gap-2">
+                    <select id="langSelect" aria-label="Language" class="px-2 py-2 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-semibold min-h-[44px] outline-none cursor-pointer border border-indigo-100"></select>
+                    <a href="movie.html" class="text-xl sm:text-2xl font-bold text-indigo-600 shrink-0">🎬<span class="hidden sm:inline"> Coding Sister</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div id="detailRoot"></div>
+    </main>
+
+    <footer class="text-center text-gray-400 text-sm py-8">
+        <span data-i18n="footer_data">데이터 제공:</span> <a href="https://www.themoviedb.org/" target="_blank" class="underline hover:text-indigo-500">TMDB</a>
+    </footer>
+
+    <script src="js/movie/i18n.js"></script>
+    <script src="js/movie/config.js"></script>
+    <script src="js/movie/api.js"></script>
+    <script src="js/movie/favorites.js"></script>
+    <script src="js/movie/recent.js"></script>
+    <script src="js/movie/ui.js"></script>
+    <script src="js/movie/detail.js"></script>
+</body>
+</html>
