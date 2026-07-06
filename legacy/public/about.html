@@ -24,11 +24,11 @@
     <!-- 헤더 -->
     <header class="bg-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-wrap justify-between items-center gap-3">
                 <h1 class="text-2xl sm:text-3xl font-bold text-indigo-600">💻 Coding Sister</h1>
 
                 <!-- 테마 전환 버튼 -->
-                <div class="flex gap-2 items-center">
+                <div class="flex flex-wrap gap-2 items-center shrink-0">
                     <button id="themeToggleBtn" class="px-4 py-2 bg-indigo-100 text-indigo-600 rounded-lg hover:bg-indigo-200 transition font-semibold min-h-[44px] text-sm">
                         🎨 테마
                     </button>
@@ -75,18 +75,32 @@
                 <h2 class="text-3xl sm:text-4xl font-bold text-white mb-4">🧩 테트리스 미니게임</h2>
                 <p class="text-gray-300 text-base sm:text-lg mb-6">클래식 테트리스를 즐겨보세요!</p>
 
-                <!-- 게임 영역: 캔버스를 정중앙, 정보는 우측(데스크톱)/아래(모바일) -->
+                <!-- 게임 영역: 캔버스 정중앙, 정보는 우측(데스크톱)/아래(모바일)
+                     모바일 순서(order): 보드 → 터치버튼 → 통계  (버튼이 보드 바로 밑에 오도록) -->
                 <div class="flex flex-col items-center gap-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-start sm:gap-6 mb-6">
                     <!-- 좌측 균형용 빈 칸 (데스크톱에서 캔버스를 정중앙에 두기 위함) -->
-                    <div class="hidden sm:block"></div>
+                    <div class="hidden sm:block sm:order-1"></div>
 
                     <!-- 캔버스 (가운데) -->
-                    <div class="flex justify-center">
+                    <div class="flex justify-center order-1 sm:order-2">
                         <canvas id="tetrisCanvas" width="300" height="600" class="border-4 border-yellow-400 bg-black max-w-full"></canvas>
                     </div>
 
-                    <!-- 우측 사이드바: 점수/레벨/라인 + 조작법 (모바일: 게임 아래) -->
-                    <div class="flex flex-col gap-3 w-full sm:gap-4 sm:w-56 sm:justify-self-start sm:self-stretch">
+                    <!-- 모바일/태블릿 터치 조작 패드 (모바일: 보드 바로 아래 / 태블릿: 하단 전체 폭) -->
+                    <div class="lg:hidden order-2 sm:order-4 sm:col-span-3 w-full max-w-xs mx-auto select-none">
+                        <div class="grid grid-cols-3 gap-2 mb-2">
+                            <div></div>
+                            <button id="btnRotate" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="회전">🔄</button>
+                            <div></div>
+                            <button id="btnLeft" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="왼쪽 이동">⬅️</button>
+                            <button id="btnDown" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="아래로 이동">⬇️</button>
+                            <button id="btnRight" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="오른쪽 이동">➡️</button>
+                        </div>
+                        <button id="btnDrop" class="touch-manipulation w-full py-3 bg-yellow-500 text-black font-bold rounded-lg active:bg-yellow-400" aria-label="한 번에 내리기">⏬ 한 번에 내리기</button>
+                    </div>
+
+                    <!-- 우측 사이드바: 점수/레벨/라인 + 조작법 (모바일: 버튼 아래) -->
+                    <div class="order-3 sm:order-3 flex flex-col gap-3 w-full sm:gap-4 sm:w-56 sm:justify-self-start sm:self-stretch">
                         <!-- 통계 (모바일: 가로 / 데스크톱: 세로) -->
                         <div class="flex flex-row sm:flex-col gap-3 sm:gap-4">
                             <div class="bg-gray-900 rounded p-4 flex-1">
@@ -102,8 +116,8 @@
                                 <p id="lines" class="text-2xl font-bold text-red-400">0</p>
                             </div>
                         </div>
-                        <!-- 조작법 (데스크톱에선 캔버스 밑단에 맞춰 하단 정렬) -->
-                        <div class="bg-gray-900 rounded p-4 text-left sm:mt-auto">
+                        <!-- 조작법 (데스크톱에선 캔버스 밑단에 맞춰 하단 정렬) — 폰에선 터치패드로 조작하므로 숨김 -->
+                        <div class="hidden sm:block bg-gray-900 rounded p-4 text-left sm:mt-auto">
                             <p class="text-white font-bold mb-2">🎮 조작법</p>
                             <ul class="text-gray-300 text-sm space-y-1">
                                 <li><span class="lg:hidden">버튼 또는 </span>방향키 ⬅️ ➡️: 좌우 이동</li>
@@ -114,19 +128,6 @@
                             </ul>
                         </div>
                     </div>
-                </div>
-
-                <!-- 모바일/태블릿 터치 조작 패드 -->
-                <div class="lg:hidden max-w-xs mx-auto mb-6 select-none">
-                    <div class="grid grid-cols-3 gap-2 mb-2">
-                        <div></div>
-                        <button id="btnRotate" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="회전">🔄</button>
-                        <div></div>
-                        <button id="btnLeft" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="왼쪽 이동">⬅️</button>
-                        <button id="btnDown" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="아래로 이동">⬇️</button>
-                        <button id="btnRight" class="touch-manipulation py-4 bg-gray-800 text-white text-2xl rounded-lg active:bg-gray-600" aria-label="오른쪽 이동">➡️</button>
-                    </div>
-                    <button id="btnDrop" class="touch-manipulation w-full py-3 bg-yellow-500 text-black font-bold rounded-lg active:bg-yellow-400" aria-label="한 번에 내리기">⏬ 한 번에 내리기</button>
                 </div>
 
                 <button id="tetrisStartBtn" class="px-6 py-3 bg-yellow-400 text-black rounded-lg hover:bg-yellow-300 transition font-bold min-h-[44px]">

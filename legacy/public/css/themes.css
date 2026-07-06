@@ -1,0 +1,238 @@
+/* 테마 스타일 */
+
+/* 기본 테마 (파란색) */
+body.theme-default {
+    background: linear-gradient(to bottom right, #f0f9ff, #e0e7ff);
+}
+
+body.theme-default #themeBody {
+    background-color: #f3f4f6;
+}
+
+/* ============ 테트리스 테마 (네온 아케이드) ============ */
+/* 테트로미노 팔레트
+   I=#00f0f0  O=#f0f000  T=#a000f0  J=#2030f0  L=#f0a000  S=#00f000  Z=#f00000 */
+
+/* 배경 - 어두운 게임보드 + 은은한 격자 */
+body.theme-mario,
+body.theme-mario #themeBody {
+    background:
+        linear-gradient(rgba(0, 240, 240, 0.05) 1px, transparent 1px) 0 0 / 30px 30px,
+        linear-gradient(90deg, rgba(0, 240, 240, 0.05) 1px, transparent 1px) 0 0 / 30px 30px,
+        radial-gradient(ellipse at 50% 0%, #1b1b3a 0%, #0a0a1f 70%);
+    background-attachment: fixed;
+    font-family: 'Courier New', monospace;
+    color: #c7d2fe;
+}
+
+/* 테트리스 테마: 게임을 맨 위로, 기본 프로필은 그 아래로 (기본 테마엔 영향 없음) */
+body.theme-mario main {
+    display: flex;
+    flex-direction: column;
+}
+body.theme-mario #tetrisSection {
+    order: -1;
+}
+
+/* 헤더 - 어두운 패널 + 시안 네온 라인 */
+body.theme-mario header {
+    background: #11112a !important;
+    border-bottom: 3px solid #00f0f0;
+    box-shadow: 0 4px 24px rgba(0, 240, 240, 0.25);
+}
+
+body.theme-mario header h1 {
+    color: #00f0f0 !important;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px rgba(0, 240, 240, 0.8);
+}
+
+/* 카드/섹션 - 어두운 블록 패널 + 네온 테두리 */
+body.theme-mario section,
+body.theme-mario .bg-white {
+    background-color: #15152e !important;
+    border: 3px solid #00f0f0;
+    border-radius: 0 !important;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.6),
+        0 0 18px rgba(0, 240, 240, 0.25),
+        6px 6px 0 rgba(0, 0, 0, 0.6);
+    color: #c7d2fe !important;
+}
+
+body.theme-mario .shadow-lg,
+body.theme-mario .shadow-xl {
+    box-shadow:
+        0 0 18px rgba(0, 240, 240, 0.25),
+        6px 6px 0 rgba(0, 0, 0, 0.6) !important;
+}
+
+body.theme-mario .rounded-lg,
+body.theme-mario .rounded-full,
+body.theme-mario .rounded {
+    border-radius: 0 !important;
+}
+
+/* 연락처 섹션 (원래 인디고 배경) 도 패널로 통일 */
+body.theme-mario .bg-indigo-600 {
+    background-color: #15152e !important;
+}
+
+/* 프로젝트 카드마다 다른 테트로미노 네온 색 */
+body.theme-mario .grid > div:nth-child(6n+1) { border-color: #00f0f0; box-shadow: 0 0 18px rgba(0,240,240,.3), 6px 6px 0 rgba(0,0,0,.6); }
+body.theme-mario .grid > div:nth-child(6n+2) { border-color: #f0f000; box-shadow: 0 0 18px rgba(240,240,0,.3), 6px 6px 0 rgba(0,0,0,.6); }
+body.theme-mario .grid > div:nth-child(6n+3) { border-color: #a000f0; box-shadow: 0 0 18px rgba(160,0,240,.35), 6px 6px 0 rgba(0,0,0,.6); }
+body.theme-mario .grid > div:nth-child(6n+4) { border-color: #00f000; box-shadow: 0 0 18px rgba(0,240,0,.3), 6px 6px 0 rgba(0,0,0,.6); }
+body.theme-mario .grid > div:nth-child(6n+5) { border-color: #f0a000; box-shadow: 0 0 18px rgba(240,160,0,.3), 6px 6px 0 rgba(0,0,0,.6); }
+body.theme-mario .grid > div:nth-child(6n+6) { border-color: #f00000; box-shadow: 0 0 18px rgba(240,0,0,.3), 6px 6px 0 rgba(0,0,0,.6); }
+
+/* 등장 애니메이션 - 블록이 위에서 떨어짐 */
+@keyframes tetris-drop {
+    0% { transform: translateY(-24px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+body.theme-mario section,
+body.theme-mario .grid > div {
+    animation: tetris-drop 0.35s ease-out;
+}
+
+/* 제목 - 시안 네온 글로우 */
+body.theme-mario h2,
+body.theme-mario h3,
+body.theme-mario h4 {
+    color: #00f0f0 !important;
+    font-weight: 900 !important;
+    letter-spacing: 1px;
+    text-shadow: 0 0 8px rgba(0, 240, 240, 0.6);
+}
+
+/* 본문 텍스트 - 밝은 라벤더 */
+body.theme-mario p,
+body.theme-mario span,
+body.theme-mario label,
+body.theme-mario li,
+body.theme-mario .text-gray-600,
+body.theme-mario .text-gray-700,
+body.theme-mario .text-gray-800,
+body.theme-mario .text-gray-500 {
+    color: #c7d2fe !important;
+}
+
+/* 버튼 - 블록형 3D + 네온 글로우 (각자 색 유지) */
+body.theme-mario button,
+body.theme-mario a.inline-block,
+body.theme-mario a.inline-flex,
+body.theme-mario header a[href*="todo"] {
+    border: 2px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: 0 !important;
+    font-weight: bold !important;
+    letter-spacing: 1px;
+    box-shadow:
+        inset 2px 2px 0 rgba(255, 255, 255, 0.25),
+        inset -2px -2px 0 rgba(0, 0, 0, 0.35),
+        4px 4px 0 rgba(0, 0, 0, 0.6) !important;
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+body.theme-mario button:hover,
+body.theme-mario a.inline-block:hover,
+body.theme-mario a.inline-flex:hover {
+    transform: translate(2px, 2px) !important;
+    box-shadow:
+        inset 2px 2px 0 rgba(255, 255, 255, 0.25),
+        inset -2px -2px 0 rgba(0, 0, 0, 0.35),
+        2px 2px 0 rgba(0, 0, 0, 0.6) !important;
+}
+
+body.theme-mario button:active,
+body.theme-mario a.inline-block:active,
+body.theme-mario a.inline-flex:active {
+    transform: translate(4px, 4px) !important;
+    box-shadow:
+        inset 2px 2px 0 rgba(255, 255, 255, 0.25),
+        inset -2px -2px 0 rgba(0, 0, 0, 0.35),
+        0 0 0 rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 입력 필드 (TODO 페이지) - 어두운 패널 + 시안 테두리 */
+body.theme-mario input,
+body.theme-mario textarea,
+body.theme-mario select {
+    background-color: #0d0d22 !important;
+    border: 2px solid #00f0f0 !important;
+    border-radius: 0 !important;
+    font-family: 'Courier New', monospace !important;
+    color: #e0e7ff !important;
+}
+
+body.theme-mario input::placeholder,
+body.theme-mario textarea::placeholder {
+    color: #6b7280 !important;
+}
+
+body.theme-mario input:focus,
+body.theme-mario textarea:focus,
+body.theme-mario select:focus {
+    outline: none !important;
+    box-shadow: 0 0 10px rgba(0, 240, 240, 0.6) !important;
+}
+
+/* 배지 - 보라(T) 블록 */
+body.theme-mario .bg-indigo-100,
+body.theme-mario .bg-yellow-100,
+body.theme-mario .bg-blue-100,
+body.theme-mario .bg-red-100,
+body.theme-mario .bg-green-100,
+body.theme-mario .bg-purple-100 {
+    background-color: #2a1a4a !important;
+    color: #d8b4fe !important;
+    border: 2px solid #a000f0 !important;
+    font-weight: bold !important;
+    border-radius: 0 !important;
+}
+
+/* 링크 - 시안 */
+body.theme-mario main a:not(.inline-block):not([class*="bg-"]) {
+    color: #00f0f0 !important;
+    font-weight: bold !important;
+}
+
+body.theme-mario main a:not(.inline-block):not([class*="bg-"]):hover {
+    color: #f0f000 !important;
+}
+
+/* 모달 - 어두운 패널 */
+body.theme-mario #themeModal {
+    background-color: rgba(0, 0, 0, 0.85) !important;
+}
+
+body.theme-mario #themeModal > div {
+    background-color: #15152e !important;
+    border: 3px solid #00f0f0 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 0 24px rgba(0, 240, 240, 0.4) !important;
+}
+
+body.theme-mario .themeOption {
+    border: 2px solid #3a3a6a !important;
+    border-radius: 0 !important;
+    background-color: #1d1d3e !important;
+}
+
+body.theme-mario .themeOption:hover {
+    border-color: #00f0f0 !important;
+    box-shadow: 0 0 12px rgba(0, 240, 240, 0.4) !important;
+}
+
+/* 아바타 원 - 보라 블록 */
+body.theme-mario .bg-indigo-600.rounded-full {
+    background-color: #a000f0 !important;
+    box-shadow: 0 0 20px rgba(160, 0, 240, 0.6);
+}
+
+/* 구분선 */
+body.theme-mario hr,
+body.theme-mario .border-b {
+    border-color: #00f0f0 !important;
+}

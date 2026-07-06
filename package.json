@@ -1,17 +1,38 @@
 {
   "name": "coding-sister-study",
-  "version": "1.0.0",
-  "description": "임현수의 학습·포트폴리오 프로젝트 모음 (포트폴리오 · TODO · 영화 사이트 등)",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "임현수의 학습·포트폴리오 프로젝트 모음 (포트폴리오 · TODO · 영화 사이트) — React + TypeScript + Vite",
+  "type": "module",
   "scripts": {
-    "dev": "live-server public/ --port=8081 --entry-file=index.html",
-    "build:css": "tailwindcss -i ./src/css/input.css -o ./public/css/output.css --watch"
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "db:connect": "node src/db/connect.js"
   },
-  "keywords": ["portfolio", "todo", "app"],
-  "author": "",
+  "keywords": [
+    "portfolio",
+    "todo",
+    "movie",
+    "react",
+    "typescript"
+  ],
+  "author": "임현수 (Lim Hyeon Soo)",
   "license": "MIT",
+  "dependencies": {
+    "firebase": "^12.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
   "devDependencies": {
-    "tailwindcss": "^3.4.0",
-    "live-server": "^1.2.2"
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.11"
+  },
+  "optionalDependencies": {
+    "dotenv": "^17.4.2",
+    "mongoose": "^9.7.3"
   }
 }

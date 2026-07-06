@@ -1,0 +1,20 @@
+/* 전역 기본값 (라우트 공통) */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+}
+
+/* 기본(비영화) 라우트 배경 — 기존 index/about 의 body 그라데이션 재현 */
+body:not(.movie-app) {
+    background: linear-gradient(to bottom right, #f0f9ff, #e0e7ff);
+    background-attachment: fixed;
+}
+
+/* 캘린더/TODO 라우트는 연회색 배경 */
+body.plain-bg:not(.movie-app) {
+    background: #f9fafb;
+}
