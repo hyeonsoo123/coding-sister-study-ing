@@ -1,7 +1,7 @@
 // GET  /api/todos  → 전체 목록 (최신순)
 // POST /api/todos  → 새 일정 생성
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { getTodoModel } from '../../server/db'
+import { getTodoModel } from '../_lib/db.js'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

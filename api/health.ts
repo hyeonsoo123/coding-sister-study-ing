@@ -3,7 +3,7 @@
 //  /api/health?db=1   → 실제 Mongo 연결 시도 후 결과/에러 반환
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-const VERSION = 'diag-2'
+const VERSION = 'diag-3'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const base = {
@@ -17,7 +17,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   // DB 연결까지 시험 — 진짜 에러 메시지를 노출
   try {
-    const { getTodoModel } = await import('../server/db')
+    const { getTodoModel } = await import('./_lib/db.js')
     const Todo = await getTodoModel()
     const count = await Todo.countDocuments()
     return res.status(200).json({ ...base, db: 'connected', todoCount: count })
