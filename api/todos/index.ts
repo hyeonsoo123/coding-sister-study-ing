@@ -20,6 +20,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Allow', 'GET, POST')
     return res.status(405).json({ error: 'Method Not Allowed' })
   } catch (e) {
-    return res.status(500).json({ error: (e as Error).message, stack: (e as Error).stack })
+    return res.status(500).json({ error: (e as Error).message })
   }
 }
