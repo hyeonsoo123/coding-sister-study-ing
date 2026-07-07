@@ -1,11 +1,11 @@
 // ============================================================
 //  캘린더 · TODO 앱 (기존 index.html + calendar.js + todo.js + app.js 이식)
-//  Firebase Realtime DB 구독으로 실시간 동기화
+//  MongoDB(Atlas) 백엔드(/api/todos) 폴링으로 동기화
 // ============================================================
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBodyClass } from '../hooks/useBodyClass'
-import { todoDB, type Todo } from '../lib/firebase'
+import { todoDB, type Todo } from '../lib/todoApi'
 
 // 로컬 시간 기준 YYYY-MM-DD (UTC 변환으로 인한 하루 밀림 방지)
 function formatDateLocal(date: Date): string {
@@ -45,7 +45,7 @@ export default function CalendarTodo() {
   const [titleError, setTitleError] = useState(false)
   const titleRef = useRef<HTMLInputElement>(null)
 
-  // Firebase 구독
+  // 목록 구독 (폴링)
   useEffect(() => {
     const unsub = todoDB.subscribe(
       (list) => {
@@ -269,7 +269,7 @@ export default function CalendarTodo() {
                 {!loaded && !dbError && <p className="text-center text-gray-500 py-8">⏳ 불러오는 중...</p>}
                 {dbError && (
                   <p className="text-center text-red-500 py-8">
-                    ⚠️ DB 연결에 실패했습니다. 데이터베이스 규칙(Rules)을 확인해주세요.
+                    ⚠️ DB 연결에 실패했습니다. 서버 상태와 MONGODB_URI 설정을 확인해주세요.
                   </p>
                 )}
                 {loaded && !dbError && filtered.length === 0 && (

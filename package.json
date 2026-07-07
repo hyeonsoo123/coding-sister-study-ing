@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "db:connect": "node src/db/connect.js"
+    "typecheck:api": "tsc -p tsconfig.api.json",
+    "db:connect": "node src/db/connect.js",
+    "db:migrate": "node scripts/migrate-firebase-to-mongo.mjs"
   },
   "keywords": [
     "portfolio",
@@ -19,7 +21,7 @@
   "author": "임현수 (Lim Hyeon Soo)",
   "license": "MIT",
   "dependencies": {
-    "firebase": "^12.15.0",
+    "mongoose": "^9.7.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
@@ -27,12 +29,10 @@
   "devDependencies": {
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@vercel/node": "^5.8.22",
     "@vitejs/plugin-react": "^4.3.4",
+    "dotenv": "^17.4.2",
     "typescript": "^5.6.3",
     "vite": "^5.4.11"
-  },
-  "optionalDependencies": {
-    "dotenv": "^17.4.2",
-    "mongoose": "^9.7.3"
   }
 }
