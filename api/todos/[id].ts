@@ -1,14 +1,14 @@
 // PATCH  /api/todos/:id  → 필드 수정({ set }) 또는 수정이력 추가({ pushHistory })
 // DELETE /api/todos/:id  → 삭제
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { dbConnect, Todo } from '../../server/db'
+import { getTodoModel } from '../../server/db'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { id } = req.query
   if (typeof id !== 'string') return res.status(400).json({ error: 'invalid id' })
 
   try {
-    await dbConnect()
+    const Todo = await getTodoModel()
 
     if (req.method === 'PATCH') {
       const { set, pushHistory } = (req.body || {}) as {

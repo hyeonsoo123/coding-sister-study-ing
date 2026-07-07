@@ -1,11 +1,11 @@
 // GET  /api/todos  → 전체 목록 (최신순)
 // POST /api/todos  → 새 일정 생성
 import type { VercelRequest, VercelResponse } from '@vercel/node'
-import { dbConnect, Todo } from '../../server/db'
+import { getTodoModel } from '../../server/db'
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    await dbConnect()
+    const Todo = await getTodoModel()
 
     if (req.method === 'GET') {
       const list = await Todo.find().sort({ _id: -1 })
@@ -20,6 +20,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Allow', 'GET, POST')
     return res.status(405).json({ error: 'Method Not Allowed' })
   } catch (e) {
-    return res.status(500).json({ error: (e as Error).message })
+    return res.status(500).json({ error: (e as Error).message, stack: (e as Error).stack })
   }
 }
