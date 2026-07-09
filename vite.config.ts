@@ -11,17 +11,28 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 //  ▶ 로컬 DB 연동이 필요 없을 땐 아래 plugins 배열에서 apiDev() 만 주석.
 // ============================================================
 function apiDev(): Plugin {
+  let connPromise: Promise<any> | null = null
   let modelPromise: Promise<any> | null = null
+  let userModelPromise: Promise<any> | null = null
 
-  // 연결 + Todo 모델 (api/_lib/db.ts 와 동일 스키마). 최초 1회만 연결.
-  async function getTodoModel() {
+  // 연결 1회 공용 (todos/users 모델이 공유)
+  async function connect() {
     const mongoose = (await import('mongoose')).default
-    if (!modelPromise) {
+    if (!connPromise) {
       // 윈도우/일부 네트워크에서 mongodb+srv SRV 조회 실패 방지 (공용 DNS)
       dns.setServers(['8.8.8.8', '1.1.1.1'])
       const uri = process.env.MONGODB_URI
       if (!uri) throw new Error('MONGODB_URI 미설정 (.env 확인)')
-      modelPromise = mongoose.connect(uri).then(() => {
+      connPromise = mongoose.connect(uri)
+    }
+    await connPromise
+    return mongoose
+  }
+
+  // Todo 모델 (api/_lib/db.ts 와 동일 스키마)
+  async function getTodoModel() {
+    if (!modelPromise) {
+      modelPromise = connect().then((mongoose) => {
         if (mongoose.models.Todo) return mongoose.models.Todo
         const HistorySchema = new mongoose.Schema(
           { title: String, description: String, editedAt: String },
@@ -54,6 +65,33 @@ function apiDev(): Plugin {
     return modelPromise
   }
 
+  // User 모델 (api/_lib/userModel.ts 와 동일 스키마) — passwordHash 만 저장/응답에서 제거
+  async function getUserModel() {
+    if (!userModelPromise) {
+      userModelPromise = connect().then((mongoose) => {
+        if (mongoose.models.User) return mongoose.models.User
+        const UserSchema = new mongoose.Schema(
+          {
+            username: { type: String, required: true, unique: true, trim: true },
+            passwordHash: { type: String, required: true },
+            createdAt: String,
+          },
+          { versionKey: false },
+        )
+        UserSchema.set('toJSON', {
+          transform: (_doc, ret: Record<string, unknown>) => {
+            ret.id = String(ret._id)
+            delete ret._id
+            delete ret.passwordHash
+            return ret
+          },
+        })
+        return mongoose.model('User', UserSchema)
+      })
+    }
+    return userModelPromise
+  }
+
   const json = (res: ServerResponse, code: number, data: unknown) => {
     res.statusCode = code
     res.setHeader('Content-Type', 'application/json')
@@ -76,6 +114,31 @@ function apiDev(): Plugin {
     name: 'local-api-todos',
     apply: 'serve',
     configureServer(server) {
+      // 회원가입 — api/auth/signup.ts 와 동일 로직 (bcrypt 단방향 해시)
+      server.middlewares.use('/api/auth/signup', async (req, res) => {
+        try {
+          if (req.method !== 'POST') return json(res, 405, { error: 'Method Not Allowed' })
+          const { username, password } = await readBody(req)
+          if (!username || !password)
+            return json(res, 400, { error: '아이디와 비밀번호를 입력해주세요.' })
+
+          const User = await getUserModel()
+          const bcrypt = (await import('bcryptjs')).default
+          const passwordHash = await bcrypt.hash(password, 10)
+          const created = await User.create({
+            username,
+            passwordHash,
+            createdAt: new Date().toLocaleString('ko-KR'),
+          })
+          return json(res, 201, created)
+        } catch (e) {
+          const msg = (e as Error).message
+          json(res, msg?.includes('E11000') ? 409 : 500, {
+            error: msg?.includes('E11000') ? '이미 사용 중인 아이디입니다.' : msg,
+          })
+        }
+      })
+
       // 마운트 경로가 '/api/todos' 이므로 내부 req.url 은 '/'(목록) 또는 '/:id'
       server.middlewares.use('/api/todos', async (req, res) => {
         try {

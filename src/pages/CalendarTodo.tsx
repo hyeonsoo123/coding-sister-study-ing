@@ -159,6 +159,12 @@ export default function CalendarTodo() {
             <h1 className="text-2xl sm:text-3xl font-bold text-indigo-600">📅 Coding Sister 캘린더</h1>
             <div className="flex gap-2 shrink-0">
               <Link
+                to="/signup"
+                className="inline-flex items-center justify-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-semibold min-h-[44px] text-sm"
+              >
+                📝 회원가입
+              </Link>
+              <Link
                 to="/movie"
                 className="inline-flex items-center justify-center px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700 transition font-semibold min-h-[44px] text-sm"
               >
